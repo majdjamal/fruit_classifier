@@ -1,1 +1,1 @@
-# dogs
+# Image Classification with MobileNet
