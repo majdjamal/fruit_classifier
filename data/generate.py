@@ -14,17 +14,17 @@ dataset = tfds.as_numpy(dataset)
 
 i = 0
 
-X_train = np.zeros((244, 244, 3, 10000))
+X_train = np.zeros((224, 224, 3, 10000))
 y_train = np.zeros((1, 10000))
 
-X_val = np.zeros((244, 244, 3, 4000))
+X_val = np.zeros((224, 224, 3, 4000))
 y_val = np.zeros((1, 4000))
 
-X_test = np.zeros((244,244, 3, 6580))
-y_test = np.zeros((1,1, 6580))
+X_test = np.zeros((224,224, 3, 6580))
+y_test = np.zeros((1, 6580))
 
 
-dim = (244, 244)
+dim = (224, 224)
 ind = 0
 
 for set in sets:
@@ -35,11 +35,14 @@ for set in sets:
         lbl = dog['label']
 
         img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+        img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) # CV_32F: 4-byte floating point (float)
 
         if ind < 10000:
             curr_ind = ind
 
             X_train[:,:,:, curr_ind] = img
+            lmg = X_train[:,:,:, curr_ind]
+
             y_train[:, curr_ind] = lbl
 
         elif ind < 14000:
@@ -66,4 +69,5 @@ np.save('y_val.npy', y_val)
 np.save('y_test.npy', y_test)
 
 end = time.time()
-print(end - start, 's')
+
+print((start - end)* (-1), 's')
