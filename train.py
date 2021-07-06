@@ -1,20 +1,31 @@
 
+import time
+
+s = time.time()
+
 import numpy as np
 import tensorflow as tf
-from models.mobilenet import ConvNet
+from models.mobilenet import ConvNet, MobileNet
 from data.load import LoadData
-
+import matplotlib.pyplot as plt
 
 def train():
-    model = ConvNet()
+    #model = ConvNet()
+    mobilenet = MobileNet()
 
-    X, y = LoadData()
-    X = X.transpose([3, 0,1,2])
-    y = y.T
+    data = LoadData()
 
-    history = model.fit(X[:10], y[:10], epochs=1,
-                    validation_data=(X[:10], y[:10]))
+    mobilenet.compile(optimizer='adam',
+                  loss= tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  metrics=['accuracy'])
 
-    model.save_weights('./weights')
+    history = mobilenet.fit(data.X_train, data.y_train, epochs=1,
+                    validation_data=(data.X_val, data.y_val))
+
+    mobilenet.save_weights('./weights')
 
 train()
+
+e = time.time()
+
+print(e - s, 's')

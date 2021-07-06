@@ -265,7 +265,3 @@ def MobileNet():
 
     print(info)
     return model
-
-
-MobileNetManuell()
-MobileNet()
