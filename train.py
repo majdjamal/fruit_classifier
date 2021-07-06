@@ -11,10 +11,10 @@ def train():
     X, y = LoadData()
     X = X.transpose([3, 0,1,2])
     y = y.T
-    print(X.shape)
-    print(y.shape)
-    history = model.fit(X, y, epochs=10,
-                    validation_data=(X, y))
 
+    history = model.fit(X[:10], y[:10], epochs=1,
+                    validation_data=(X[:10], y[:10]))
+
+    model.save_weights('./weights')
 
 train()

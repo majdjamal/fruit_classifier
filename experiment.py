@@ -17,6 +17,7 @@ from data.alba import getImage
 X, y = LoadData()
 
 mobile = MobileNet()
+
 #img = X[:,:,:,101].reshape(1,224,224,3)
 
 #pred = mobile.predict(img)
