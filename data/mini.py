@@ -15,13 +15,13 @@ dataset = tfds.as_numpy(dataset)
 i = 0
 
 X_train = np.zeros((224, 224, 3, 7000))
-y_train = np.zeros((1, 50))
+y_train = np.zeros((1, 7000))
 
 X_val = np.zeros((224, 224, 3, 500))
-y_val = np.zeros((1, 50))
+y_val = np.zeros((1, 500))
 
 X_test = np.zeros((224,224, 3, 500))
-y_test = np.zeros((1, 50))
+y_test = np.zeros((1, 500))
 
 
 dim = (224, 224)
