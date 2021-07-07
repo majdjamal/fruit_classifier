@@ -16,9 +16,9 @@ def train():
 
     data = LoadData()
 
-    opt = tfa.optimizers.AdamW(learning_rate=0.045, weight_decay=0.00004)
+    #opt = tfa.optimizers.AdamW(learning_rate=0.045, weight_decay=0.00004)
 
-    mobilenet.compile(optimizer=opt,
+    mobilenet.compile(optimizer='adam',
                   loss= tf.keras.losses.SparseCategoricalCrossentropy(),
                   metrics=['accuracy'])
 
