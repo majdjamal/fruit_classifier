@@ -15,7 +15,7 @@ dataset = tfds.as_numpy(dataset)
 i = 0
 
 X_train = np.zeros((224, 224, 3, 12000))
-y_train = np.zeros((1, 5000))
+y_train = np.zeros((1, 12000))
 
 X_val = np.zeros((224, 224, 3, 250))
 y_val = np.zeros((1, 250))
