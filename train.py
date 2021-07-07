@@ -16,7 +16,7 @@ def train():
     data = LoadData()
 
     mobilenet.compile(optimizer= tf.keras.optimizers.RMSprop(learning_rate=0.1),
-                  loss= tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  loss= tf.keras.losses.SparseCategoricalCrossentropy(),
                   metrics=['categorical_accuracy'])
 
     history = mobilenet.fit(data.X_train, data.y_train, epochs=200,
