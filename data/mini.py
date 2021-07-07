@@ -14,8 +14,8 @@ dataset = tfds.as_numpy(dataset)
 
 i = 0
 
-X_train = np.zeros((224, 224, 3, 4000))
-y_train = np.zeros((1, 4000))
+X_train = np.zeros((224, 224, 3, 6000))
+y_train = np.zeros((1, 6000))
 
 X_val = np.zeros((224, 224, 3, 250))
 y_val = np.zeros((1, 250))
@@ -38,21 +38,21 @@ for set in sets:
         img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) # CV_32F: 4-byte floating point (float)
 
 
-        if ind < 4000:
+        if ind < 6000:
 
             curr_ind = ind
             X_train[:,:,:, curr_ind] = img
             y_train[:, curr_ind] = lbl
 
 
-        elif ind < 4250:
-            curr_ind = ind - 4000
+        elif ind < 6250:
+            curr_ind = ind - 6000
             X_val[:,:,:, curr_ind] = img
             y_val[:, curr_ind] = lbl
 
-        elif ind < 4500:
+        elif ind < 6500:
 
-            curr_ind = ind - 4250
+            curr_ind = ind - 6250
 
             X_test[:,:,:, curr_ind] = img
             y_test[:, curr_ind] = lbl
