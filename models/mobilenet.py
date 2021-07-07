@@ -12,7 +12,7 @@ def MobileNetModule():
     dim = (224,224, 3)
 
     net = mob.MobileNet(
-        input_shape=dim, alpha=1.0, depth_multiplier=1.1, dropout=0.002,
+        input_shape=dim, alpha=1.0, depth_multiplier=1, dropout=0.002,
         include_top=True, weights=None, pooling=None,
         classes=120, classifier_activation='softmax')
 
