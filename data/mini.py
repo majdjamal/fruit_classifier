@@ -17,11 +17,11 @@ i = 0
 X_train = np.zeros((224, 224, 3, 12000))
 y_train = np.zeros((1, 12000))
 
-X_val = np.zeros((224, 224, 3, 250))
-y_val = np.zeros((1, 250))
+X_val = np.zeros((224, 224, 3, 1000))
+y_val = np.zeros((1, 1000))
 
-X_test = np.zeros((224,224, 3, 250))
-y_test = np.zeros((1, 250))
+X_test = np.zeros((224,224, 3, 10))
+y_test = np.zeros((1, 10))
 
 
 dim = (224, 224)
@@ -45,14 +45,14 @@ for set in sets:
             y_train[:, curr_ind] = lbl
 
 
-        elif ind < 12250:
+        elif ind < 13000:
             curr_ind = ind - 12000
             X_val[:,:,:, curr_ind] = img
             y_val[:, curr_ind] = lbl
 
-        elif ind < 12500:
+        elif ind < 13010:
 
-            curr_ind = ind - 12250
+            curr_ind = ind - 13000
 
             X_test[:,:,:, curr_ind] = img
             y_test[:, curr_ind] = lbl

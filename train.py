@@ -8,6 +8,7 @@ import tensorflow as tf
 from models.mobilenet import ConvNet, MobileNet, MobileNetModule
 from data.load import LoadData
 import matplotlib.pyplot as plt
+import tensorflow_addons as tfa
 
 def train():
     #model = ConvNet()
@@ -15,11 +16,13 @@ def train():
 
     data = LoadData()
 
-    mobilenet.compile(optimizer= 'rmsprop',
+    opt = tfa.optimizers.AdamW(learning_rate=0.045, weight_decay=0.00004)
+
+    mobilenet.compile(optimizer=opt,
                   loss= tf.keras.losses.SparseCategoricalCrossentropy(),
                   metrics=['accuracy'])
 
-    history = mobilenet.fit(data.X_train, data.y_train, epochs=100,
+    history = mobilenet.fit_generator(data.X_train, data.y_train, epochs=300,
                     validation_data=(data.X_val, data.y_val))
 
     mobilenet.save_weights('./weights')

@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow.keras.applications.mobilenet as mob
 from tensorflow.keras import datasets, layers, models
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
+import tensorflow_addons as tfa
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -12,12 +13,12 @@ def MobileNetModule():
     dim = (224,224, 3)
 
     net = mob.MobileNet(
-        input_shape=dim, alpha=1.0, depth_multiplier=1, dropout=0.002,
+        input_shape=dim, alpha=1.0, depth_multiplier=1, dropout=0.001,
         include_top=True, weights=None, pooling=None,
         classes=120, classifier_activation='softmax')
 
     info = net.summary()
-    print(info)
+
     return net
 
 def ConvNet():
@@ -29,7 +30,8 @@ def ConvNet():
 
     info = model.summary()
 
-    model.compile(optimizer='adam',
+    opt = tfa.optimizers.AdamW(learning_rate=0.045, weight_decay=0.00004)
+    model.compile(optimizer= opt,
               loss= SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
