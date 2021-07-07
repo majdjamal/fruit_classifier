@@ -19,8 +19,8 @@ def train():
                   loss= tf.keras.losses.SparseCategoricalCrossentropy(),
                   metrics=['sparse_categorical_accuracy'])
 
-    #history = mobilenet.fit(data.X_train, data.y_train, epochs=200,
-    #                validation_data=(data.X_val, data.y_val))
+    history = mobilenet.fit(data.X_train, data.y_train, epochs=200,
+                    validation_data=(data.X_val, data.y_val))
 
     mobilenet.save_weights('./weights')
 
