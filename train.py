@@ -15,11 +15,11 @@ def train():
 
     data = LoadData()
 
-    mobilenet.compile(optimizer='adam',
+    mobilenet.compile(optimizer= tf.keras.optimizers.RMSprop(learning_rate=0.1),
                   loss= tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                  metrics=['accuracy'])
+                  metrics=['categorical_accuracy'])
 
-    history = mobilenet.fit(data.X_train, data.y_train, epochs=100, batch_size = 100,
+    history = mobilenet.fit(data.X_train, data.y_train, epochs=200,
                     validation_data=(data.X_val, data.y_val))
 
     mobilenet.save_weights('./weights')
