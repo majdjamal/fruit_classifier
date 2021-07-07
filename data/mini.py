@@ -37,7 +37,7 @@ for set in sets:
         img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
         img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) # CV_32F: 4-byte floating point (float)
 
-        if ind < 2500:
+        if ind < 4000:
             curr_ind = ind
 
             X_train[:,:,:, curr_ind] = img
@@ -45,14 +45,14 @@ for set in sets:
 
             y_train[:, curr_ind] = lbl
 
-        elif ind < 3000:
-            curr_ind = ind - 2500
+        elif ind < 4500:
+            curr_ind = ind - 4000
             X_val[:,:,:, curr_ind] = img
             y_val[:, curr_ind] = lbl
 
-        elif ind < 3500:
+        elif ind < 5000:
 
-            curr_ind = ind - 3000
+            curr_ind = ind - 4500
             X_test[:,:,:, curr_ind] = img
             y_test[:, curr_ind] = lbl
 
