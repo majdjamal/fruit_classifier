@@ -5,13 +5,13 @@ s = time.time()
 
 import numpy as np
 import tensorflow as tf
-from models.mobilenet import ConvNet, MobileNet
+from models.mobilenet import ConvNet, MobileNet, MobileNetModule
 from data.load import LoadData
 import matplotlib.pyplot as plt
 
 def train():
     #model = ConvNet()
-    mobilenet = MobileNet()
+    mobilenet = MobileNetModule()
 
     data = LoadData()
 
