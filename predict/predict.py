@@ -12,7 +12,7 @@ from data.loaddata import LoadData, LoadTest
 from sklearn.metrics import confusion_matrix, recall_score, precision_score
 
 ind_to_class = {
-0 : 'AppleGreen', 
+0 : 'AppleGreen',
 1:'AppleRed',
 2:'Banana',
 3:'Carrots',
@@ -30,7 +30,7 @@ ind_to_class = {
 def predict(model, img_path, args):
 	""" Predicts a label for one image.
 	:@param model: A trained network
-	:@param img_path: Path to image 
+	:@param img_path: Path to image
 	:@param args: Program arguments
 	"""
 	try:
@@ -60,17 +60,17 @@ def predict(model, img_path, args):
 	print(img_path, ': ', refined_preds[0], ' | ', refined_preds[1], ' | ', refined_preds[2], ' | ', refined_preds[3])
 
 def evaluate(model, args):
-	""" Evaluates a trained model on Test Data. 
-	This function computes F1Score, Recall, 
-	Precision, and a Confusion Matrix. 
+	""" Evaluates a trained model on Test Data.
+	This function computes F1Score, Recall,
+	Precision, and a Confusion Matrix.
 	:@param model: A trained network
 	:@param args: Program arguments
 	"""
 	try:
-		model.load_weights(args.path)
+		model.load_weights('weights/mobilenet_transfer.ckpt')
 	except:
-		raise ValueError('\n File does not exist. Provide the right path with the command --path *PATH-TO-WEIGHT*.') 
-	
+		raise ValueError('\n File does not exist. Provide the right path with the command --path *PATH-TO-WEIGHT*.')
+
 	X_test, y_test = LoadTest()
 
 	y_test_hot = one_hot(y_test, args.NClasses)
@@ -81,7 +81,7 @@ def evaluate(model, args):
 	###
 	###	F1Score
 	###
-	f1 = F1Score(num_classes=args.NClasses) 
+	f1 = F1Score(num_classes=args.NClasses)
 	f1.update_state(y_test_hot[:,0,:], y_pred)
 	f1 = f1.result()
 	f1.numpy()
@@ -125,12 +125,12 @@ def evaluate(model, args):
 	print('=-=-=-=-=-=-=-=-=-=-=-=-=-=--=')
 
 def RealTimeClassification(model, args):
-	""" Real-Time Image Classification. Connects your webcam 
-	to a deep neural network and classifies which fruit it is seeing. 
+	""" Real-Time Image Classification. Connects your webcam
+	to a deep neural network and classifies which fruit it is seeing.
 	:@param model: A trained network
 	:@param args: Program arguments
 	"""
-	
+
 	try:
 		model.load_weights(args.path)
 	except:
@@ -138,7 +138,8 @@ def RealTimeClassification(model, args):
 
 
 	def process(img = 'data/test_data/opencv.png'):
-
+	""" Pre-processes the captured photograph
+	"""
 	    dim = (224,224)
 	    img = plt.imread(img)
 	    image = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
@@ -160,7 +161,8 @@ def RealTimeClassification(model, args):
 
 
 	def image_generator():
-
+	""" Captures photographs from users webcam.
+	"""
 	    camera = cv2.VideoCapture(0)
 
 	    while True:

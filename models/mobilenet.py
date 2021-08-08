@@ -14,30 +14,31 @@ from tensorflow_addons.optimizers import SGDW
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def MobileNetModule(args, transfer_learning = False, NClasses = 14):
-	""" Initializes and compiles MobileNetV1. 
+def MobileNetModule(args, transfer_learning = False, NClasses = 15):
+	""" Initializes and compiles MobileNetV1.
 	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
 	:@param NClasses: Number of labels
 	:@param args: Program arguments
 	:return model: A compiled network
 	"""
+	print(args.transfer_learning)
 	dim = (224,224, 3)
 
-	if transfer_learning:
+	if args.transfer_learning:
 		model = Sequential()
 
 		mobile = MobileNet(
-			input_shape=dim, 
-			alpha=1.0, 
-			depth_multiplier=1, 
+			input_shape=dim,
+			alpha=1.0,
+			depth_multiplier=1,
 			dropout=args.dropout,
 			include_top=False,
-			weights='imagenet', 
+			weights='imagenet',
 			pooling=None,
 			classes=NClasses
 		)
 
-		model.add(mobile)
+		model.add(mobile)	#Add MobileNet
 		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
 		model.add(Reshape((1, 1, 1024)))
 		model.add(Dropout(args.dropout))
@@ -47,15 +48,15 @@ def MobileNetModule(args, transfer_learning = False, NClasses = 14):
 
 	else:
 
-		model = MobileNet(	
-			input_shape=dim, 
-			alpha=1.0, 
-			depth_multiplier=1, 
+		model = MobileNet(
+			input_shape=dim,
+			alpha=1.0,
+			depth_multiplier=1,
 			dropout=args.dropout,
-			include_top=True, 
-			weights=None, 
+			include_top=True,
+			weights=None,
 			pooling=None,
-			classes=14, 
+			classes=args.NClasses,
 			classifier_activation='softmax')
 
 	model.summary()

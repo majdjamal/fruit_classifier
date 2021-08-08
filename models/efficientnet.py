@@ -10,9 +10,12 @@ from tensorflow.keras.applications import EfficientNetB0, EfficientNetB5
 from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dropout, Conv2D, Activation, Dense
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow_addons.optimizers import SGDW
+from tensorflow.keras.optimizers import SGD
 
-def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses = 14):
-	""" Initializes and compiles MobileNetV1. 
+ssl._create_default_https_context = ssl._create_unverified_context
+
+def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses = 15):
+	""" Initializes and compiles MobileNetV1.
 	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
 	:@param NClasses: Number of labels
 	:@param args: Program arguments
@@ -26,6 +29,7 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 		model = Sequential()
 
 		if network == 'B0':
+
 			effie = EfficientNetB0(
 			    include_top=False,
 			    weights="imagenet",
@@ -42,14 +46,14 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 			    classes=NClasses
 			)
 
-		model.add(effie)
+		model.add(effie)	#add efficientnet
 
 		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
 		model.add(Dropout(args.dropout))
 		model.add(Dense(NClasses, activation='softmax'))
-		
+
 	else:
-		
+
 		if network == 'B0':
 
 			model = EfficientNetB0(
@@ -72,7 +76,7 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 
 
 	model.summary()
-	
+
 	opt = SGDW(
 		weight_decay = args.wd,
 		learning_rate = args.eta,

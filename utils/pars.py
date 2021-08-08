@@ -34,39 +34,42 @@ parser.add_argument('--predict', type = bool, default=False,
 parser.add_argument('--max_brightness', type = float, default=0.95,
 	help='Bool, set "True" to generate_data.')
 
-parser.add_argument('--min_brightness', type = float, default=0.5,
+parser.add_argument('--min_brightness', type = float, default=0.6,
 	help='Bool, set "True" to generate_data.')
 
-parser.add_argument('--max_noise', type = float, default=0.2,
+parser.add_argument('--max_noise', type = float, default=0.22,
 	help='Bool, set "True" to generate_data.')
-parser.add_argument('--min_noise', type = float, default=0.1,
+parser.add_argument('--min_noise', type = float, default=0.12,
 	help='Bool, set "True" to generate_data.')
 
 ###
 ###	Training arguments
 ###
-parser.add_argument('--transfer_learning', type = bool, default=True,
+parser.add_argument('--transfer_learning', type = bool, default=False,
+	help='Bool, set "False" to construct networks with random initalization.')
+
+parser.add_argument('--img_aug', type = bool, default=False,
 	help='Bool, set "False" to construct networks with random initalization.')
 
 parser.add_argument('--eta', type = float, default=1e-3,
 	help='Learning Rate')
 
-parser.add_argument('--roh', type = float, default=0.99,
+parser.add_argument('--roh', type = float, default=0.985,
 	help='Momentum')
 
 parser.add_argument('--wd', type = float, default=1e-5,
 	help='Weight Decay')
 
-parser.add_argument('--NClasses', type = int, default=14,
+parser.add_argument('--NClasses', type = int, default=15,
 	help='Weight Decay')
 
 parser.add_argument('--dropout', type = float, default=2e-3,
 	help='Dropout Rate. Default value is 0.002, used for MobileNet. Default for EfficientNet should be 0.2.')
 
-parser.add_argument('--epochs', type = int, default=5e2,
+parser.add_argument('--epochs', type = int, default=7e2,
 	help='Training Cycles')
 
+parser.add_argument('--path', type = str, default='/',
+	help='Training Cycles')
 
 args = parser.parse_args()
-
-
