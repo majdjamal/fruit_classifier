@@ -34,7 +34,7 @@ def ResNet101Module(args, transfer_learning = False, NClasses = 15):
     	classes=NClasses
 		)
 
-		model.add(res) #Add ResNet101
+		model.add(res)
 		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
 		model.add(Dense(NClasses, activation = 'softmax'))
 
