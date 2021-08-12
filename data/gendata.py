@@ -63,12 +63,12 @@ def GenerateData(args):
 	y_test = np.zeros((1, Npts_test))
 
 	def generate(ds, training_data = False, Npts = None):
-	  """ Generates data. Reading images files and converts them to
-	  NumPy arrays.
-	  :@param ds: opened dataset in ImageFolder format.
-	  :@param training_data: bool, True if dataset is for training.
-	  :@param Npts: Number of points in the dataset.
-	  """
+		""" Generates data. Reading images files and converts them to
+		NumPy arrays.
+		:@param ds: opened dataset in ImageFolder format.
+		:@param training_data: bool, True if dataset is for training.
+		:@param Npts: Number of points in the dataset.
+		"""
 		ind = 0
 
 		for fruit in tqdm (ds, total=Npts, desc="Loading..."):
@@ -111,17 +111,23 @@ def GenerateData(args):
 	print('=-=-=-=- Generating training data -=-=-=-=')
 	generate(ds_train, training_data = True, Npts = Npts_train)
 	print('=-=-=-=- Generating testing data -=-=-=-=')
-	generate(ds_test, Npts = Npts_val)
+	generate(ds_test, Npts = Npts_test)
 
 
 	print('=-=-=-=- Saving data -=-=-=-=')
 
 	np.save('data/training_data/X_train.npy', X_train)
+	print('=-=- Training Pattern Saved -=-=')
 	np.save('data/training_data/X_val.npy', X_val)
+	print('=-=- Validation Pattern Saved -=-=')
 	np.save('data/test_data/X_test.npy', X_test)
+	print('=-=- Test Pattern Saved -=-=')
 
 	np.save('data/training_data/y_train.npy', y_train)
+	print('=-=- Training Targets Saved -=-=')
 	np.save('data/training_data/y_val.npy', y_val)
+	print('=-=- Validation Targets Saved -=-=')
 	np.save('data/test_data/y_test.npy', y_test)
+	print('=-=- Testing Targets Saved -=-= \n')
 
 	print('=-=-=-=- Data generator complete! -=-=-=-=')

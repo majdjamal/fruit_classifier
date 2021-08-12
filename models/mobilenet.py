@@ -10,8 +10,83 @@ from tensorflow.keras.applications.mobilenet import MobileNet
 from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dropout, Conv2D, Activation
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow_addons.optimizers import SGDW
+import tensorflow.keras.layers as layers
+from keras.engine import training
+from keras.layers import VersionAwareLayers
 
 ssl._create_default_https_context = ssl._create_unverified_context
+
+
+
+def MobileNetFromScratch(NClasses = 15, dropout = 0.001):
+	""" Re-implements the original MobileNet from scratch. 
+	"""
+	layers = VersionAwareLayers()
+
+	def DepthwiseConv(inputs, NFilters, strides = (1,1)):
+
+		if strides == (1,1):
+			x = layers.ZeroPadding2D(((0, 1), (0, 1)))(inputs)
+			padding = 'same'
+		else:
+			x = inputs 
+			padding = 'valid'
+
+		x = layers.DepthwiseConv2D((3,3), padding = padding, strides = strides, use_bias = False)(x)
+		x = layers.BatchNormalization()(x)
+		x = layers.ReLU(6.)(x)
+		x = layers.Conv2D(NFilters, (1,1), padding = 'same', use_bias=False, strides = (1,1))(x)
+		x = layers.BatchNormalization()(x)
+		x = layers.ReLU(6.)(x)
+
+		return x
+
+	inp = layers.Input(shape = (224,224, 3))
+
+	x = layers.Conv2D(32, (3,3), padding = 'same', use_bias = False, strides = (1,1))(inp)
+
+	x = layers.BatchNormalization(axis = -1)(x)
+
+	x = layers.ReLU(6.)(x)
+
+	x = DepthwiseConv(x, 64)	# 1
+
+	x = DepthwiseConv(x, 128, strides = (2,2)) # 2
+	x = DepthwiseConv(x, 128) # 3
+
+
+	x = DepthwiseConv(x, 256, strides = (2,2))	#  4
+	x = DepthwiseConv(x, 256) # 5
+
+
+	x = DepthwiseConv(x, 512, strides = (2,2)) #6
+	
+	x = DepthwiseConv(x, 512) # 7	
+	x = DepthwiseConv(x, 512) # 8	
+	x = DepthwiseConv(x, 512) # 9	
+	x = DepthwiseConv(x, 512) # 10	
+	x = DepthwiseConv(x, 512) # 11	
+
+
+
+	x = DepthwiseConv(x, 1024, strides = (2,2)) # 12
+	
+	x = DepthwiseConv(x, 1024) # 13
+
+	x = layers.GlobalAveragePooling2D()(x)
+
+	x = layers.Reshape((1, 1, 1024))(x)
+	x = layers.Dropout(dropout)(x)
+	
+	x = layers.Conv2D(NClasses, (1,1), padding = 'same')(x)
+	x = layers.Reshape((NClasses, ))(x)
+	x = layers.Activation(activation = 'softmax')(x)
+
+	model = training.Model(inp, x)
+
+	model.summary()
+
+	return model
 
 
 def MobileNetModule(args, transfer_learning = False, NClasses = 15):
@@ -21,7 +96,6 @@ def MobileNetModule(args, transfer_learning = False, NClasses = 15):
 	:@param args: Program arguments
 	:return model: A compiled network
 	"""
-	print(args.transfer_learning)
 	dim = (224,224, 3)
 
 	if args.transfer_learning:
@@ -48,18 +122,7 @@ def MobileNetModule(args, transfer_learning = False, NClasses = 15):
 
 	else:
 
-		model = MobileNet(
-			input_shape=dim,
-			alpha=1.0,
-			depth_multiplier=1,
-			dropout=args.dropout,
-			include_top=True,
-			weights=None,
-			pooling=None,
-			classes=args.NClasses,
-			classifier_activation='softmax')
-
-	model.summary()
+		model = MobileNetFromScratch()
 
 	opt = SGDW(
 		weight_decay = args.wd,

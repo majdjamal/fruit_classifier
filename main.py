@@ -1,9 +1,12 @@
 
 __author__ = 'Majd Jamal'
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from utils.pars import args
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Removed excessive Tensorflow warnings
 
 if 'mobile' in args.model:
 	from models.mobilenet import MobileNetModule
@@ -42,8 +45,10 @@ elif args.evaluate:
 	evaluate(model, args)
 
 elif args.realtime:
+	import warnings
+	warnings.filterwarnings("ignore")
 
-	from predict.predict import RealTimeClassification
+	from predict.realtime import RealTimeClassification
 	RealTimeClassification(model, args)
 
 elif args.predict:
