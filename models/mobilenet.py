@@ -7,127 +7,136 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras import Sequential
 from tensorflow.keras.applications.mobilenet import MobileNet
-from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dropout, Conv2D, Activation
+from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dropout, Conv2D, Activation,DepthwiseConv2D, BatchNormalization, ReLU
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow_addons.optimizers import SGDW
 import tensorflow.keras.layers as layers
-from keras.engine import training
-from keras.layers import VersionAwareLayers
+from keras.utils import data_utils
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-
-
-def MobileNetFromScratch(NClasses = 15, dropout = 0.001):
+def MobileNetFromScratch(transfer_learning = True, NClasses = 15, dropout = 0.001):
 	""" Re-implements the original MobileNet from scratch. 
+	:@param transfer_learning: Bool, true to upload imagenet weights
+	:@param NClasses: Number of categories in the dataset
+	:@param droput: Dropout regularization 
+	:retunr model: MobileNetV1
 	"""
-	layers = VersionAwareLayers()
 
-	def DepthwiseConv(inputs, NFilters, strides = (1,1)):
+	model = Sequential()
 
+	def ConvBlock(model, NFilters = 32, _id = '1', strides = (1,1)):
+		""" Convolutional block. From Howards et al, (2017)
+		Figure 3. Left.
+		:@param model: Current architecture
+		:@param NFilters: Number of filters in the point-wise convolutions
+		:@param strides: Strides
+		:return model: Model with added Conv block
+		"""
+
+		model.add(layers.Conv2D(NFilters, (3,3), padding = 'same', use_bias = False, strides = strides, name = 'Conv_{}'.format(str(_id))))
+		model.add(layers.BatchNormalization(axis = -1, name = 'Conv_{}_BN'.format(str(_id))))
+		model.add(layers.ReLU(6., name = 'Conv_{}_ReLU'.format(str(_id))))
+
+		return model
+
+		# 0x7fc3d739dc10
+		# 0x7fc3d73ded30
+
+	def DWSBlock(model, NFilters, _id, strides = (1,1)):
+		""" Depth-Wise Seperable Convolution Block.
+		From Howards et al, (2017) Figure 3. Right
+		:@param model: Current architecture
+		:@param NFilters: Number of filters in the point-wise convolutions
+		:@param strides: Strides
+		:return model: Model with added DWS block
+		"""
 		if strides == (1,1):
-			x = layers.ZeroPadding2D(((0, 1), (0, 1)))(inputs)
 			padding = 'same'
 		else:
-			x = inputs 
+			model.add(layers.ZeroPadding2D(((0, 1), (0, 1))))
 			padding = 'valid'
 
-		x = layers.DepthwiseConv2D((3,3), padding = padding, strides = strides, use_bias = False)(x)
-		x = layers.BatchNormalization()(x)
-		x = layers.ReLU(6.)(x)
-		x = layers.Conv2D(NFilters, (1,1), padding = 'same', use_bias=False, strides = (1,1))(x)
-		x = layers.BatchNormalization()(x)
-		x = layers.ReLU(6.)(x)
+		##
+		##	Depth-Wise Convolutions
+		##
+		model.add(DepthwiseConv2D((3,3), padding = padding, strides = strides, use_bias = False, name = 'DWS_{}'.format(str(_id))))
+		model.add(BatchNormalization(axis = -1, name = 'DWS_{}_BN'.format(str(_id))))
+		model.add(ReLU(6., name = 'DWS_{}_ReLU'.format(str(_id))))
 
-		return x
+		##
+		##	Point-Wise Convolutions
+		##		
+		model.add(Conv2D(NFilters, (1,1), padding = 'same', use_bias=False, strides = (1,1), name = 'POINT-W_{}'.format(str(_id))))
+		model.add(BatchNormalization(axis = -1, name = 'POINT-W_{}_BN'.format(str(_id))))
+		model.add(ReLU(6., name = 'POINT-W_{}_ReLU'.format(str(_id))))
 
-	inp = layers.Input(shape = (224,224, 3))
+		return model
 
-	x = layers.Conv2D(32, (3,3), padding = 'same', use_bias = False, strides = (1,1))(inp)
+	model.add(layers.Input(shape = (224,224, 3)))
 
-	x = layers.BatchNormalization(axis = -1)(x)
+	model = ConvBlock(model, strides = (2,2))
 
-	x = layers.ReLU(6.)(x)
+	model = DWSBlock(model, 64, _id = '1')
+	model = DWSBlock(model, 128, strides = (2,2), _id = '2') 
 
-	x = DepthwiseConv(x, 64)	# 1
+	model = DWSBlock(model, 128, _id = '3') 
+	model = DWSBlock(model, 256, strides = (2,2), _id = '4')
 
-	x = DepthwiseConv(x, 128, strides = (2,2)) # 2
-	x = DepthwiseConv(x, 128) # 3
+	model = DWSBlock(model, 256, _id = '5') 
+	model = DWSBlock(model, 512, strides = (2,2), _id = '6')
 
+	model = DWSBlock(model, 512, _id = '7') 
+	model = DWSBlock(model, 512, _id = '8') 
+	model = DWSBlock(model, 512, _id = '9') 
+	model = DWSBlock(model, 512, _id = '10') 
+	model = DWSBlock(model, 512, _id = '11') 
 
-	x = DepthwiseConv(x, 256, strides = (2,2))	#  4
-	x = DepthwiseConv(x, 256) # 5
+	model = DWSBlock(model, 1024, strides = (2,2), _id = '12') 
+	model = DWSBlock(model, 1024, _id = '13') 
 
+	if transfer_learning:
 
-	x = DepthwiseConv(x, 512, strides = (2,2)) #6
-	
-	x = DepthwiseConv(x, 512) # 7	
-	x = DepthwiseConv(x, 512) # 8	
-	x = DepthwiseConv(x, 512) # 9	
-	x = DepthwiseConv(x, 512) # 10	
-	x = DepthwiseConv(x, 512) # 11	
+		model_name = 'mobilenet_%s_%d_tf_no_top.h5' % ('1_0', 224)
+		basePath = ('https://storage.googleapis.com/tensorflow/'
+                    'keras-applications/mobilenet/')
+		weights_path = basePath + model_name#'https://storage.googleapis.com/tensorflow/keras-applications/mobilenet/mobilenet_%s_%d_tf_no_top.h5' % ('1.0', '224')
+		
+		weights = data_utils.get_file(
+          model_name, weights_path, cache_subdir='models')
+		
+		model.load_weights(weights)
 
+	##
+	##	Last layers
+	##
+	model.add(layers.GlobalAveragePooling2D())
+	model.add(layers.Reshape((1, 1, 1024)))
+	model.add(layers.Dropout(dropout))
+	model.add(layers.Conv2D(NClasses, (1,1), padding = 'same'))
+	model.add(layers.Reshape((NClasses, )))
+	model.add(layers.Activation(activation = 'softmax'))
 
-
-	x = DepthwiseConv(x, 1024, strides = (2,2)) # 12
-	
-	x = DepthwiseConv(x, 1024) # 13
-
-	x = layers.GlobalAveragePooling2D()(x)
-
-	x = layers.Reshape((1, 1, 1024))(x)
-	x = layers.Dropout(dropout)(x)
-	
-	x = layers.Conv2D(NClasses, (1,1), padding = 'same')(x)
-	x = layers.Reshape((NClasses, ))(x)
-	x = layers.Activation(activation = 'softmax')(x)
-
-	model = training.Model(inp, x)
-
-	model.summary()
 
 	return model
 
 
-def MobileNetModule(args, transfer_learning = False, NClasses = 15):
+def MobileNetModule(args):
 	""" Initializes and compiles MobileNetV1.
 	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
 	:@param NClasses: Number of labels
 	:@param args: Program arguments
 	:return model: A compiled network
 	"""
-	dim = (224,224, 3)
 
-	if args.transfer_learning:
-		model = Sequential()
+	model = MobileNetFromScratch(transfer_learning = args.transfer_learning, NClasses = args.NClasses, dropout = args.dropout)
 
-		mobile = MobileNet(
-			input_shape=dim,
-			alpha=1.0,
-			depth_multiplier=1,
-			dropout=args.dropout,
-			include_top=False,
-			weights='imagenet',
-			pooling=None,
-			classes=NClasses
-		)
-
-		model.add(mobile)	#Add MobileNet
-		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
-		model.add(Reshape((1, 1, 1024)))
-		model.add(Dropout(args.dropout))
-		model.add(Conv2D(NClasses, (1, 1)))
-		model.add(Reshape((NClasses,)))
-		model.add(Activation(activation = 'softmax'))
-
-	else:
-
-		model = MobileNetFromScratch()
+	model.summary()
 
 	opt = SGDW(
-		weight_decay = args.wd,
+		momentum = args.roh,
 		learning_rate = args.eta,
-		momentum = args.roh)
+		weight_decay = args.wd)
 
 	model.compile(
 		optimizer = opt,
@@ -135,3 +144,4 @@ def MobileNetModule(args, transfer_learning = False, NClasses = 15):
 		metrics = ['accuracy'])
 
 	return model
+

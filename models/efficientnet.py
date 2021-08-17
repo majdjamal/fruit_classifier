@@ -5,26 +5,22 @@ import ssl
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras import Sequential
-from tensorflow.keras.applications.mobilenet import MobileNet
 from tensorflow.keras.applications import EfficientNetB0, EfficientNetB5
-from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dropout, Conv2D, Activation, Dense
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dropout, Dense
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow_addons.optimizers import SGDW
-from tensorflow.keras.optimizers import SGD
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses = 15):
-	""" Initializes and compiles MobileNetV1.
-	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
-	:@param NClasses: Number of labels
-	:@param args: Program arguments
+def EfficientNetModule(args):
+	""" Initializes and compiles EfficientNet.
+	:@param args: Network arguments
 	:return model: A compiled network
 	"""
 
 	dim = (224,224, 3)
 
-	if transfer_learning:
+	if args.transfer_learning:
 
 		model = Sequential()
 
@@ -34,7 +30,7 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 			    include_top=False,
 			    weights="imagenet",
 			    input_shape=dim,
-			    classes=NClasses
+			    classes=args.NClasses
 			)
 
 		elif network == 'B5':
@@ -43,14 +39,13 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 			    include_top=False,
 			    weights="imagenet",
 			    input_shape=dim,
-			    classes=NClasses
+			    classes=args.NClasses
 			)
 
-		model.add(effie)	#add efficientnet
-
-		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
+		model.add(effie)
+		model.add(GlobalAveragePooling2D())
 		model.add(Dropout(args.dropout))
-		model.add(Dense(NClasses, activation='softmax'))
+		model.add(Dense(args.NClasses, activation='softmax'))
 
 	else:
 
@@ -60,7 +55,7 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 			    include_top=True,
 			    weights=None,
 			    input_shape=dim,
-			    classes=NClasses,
+			    classes=args.NClasses,
 			    classifier_activation="softmax",
 				)
 
@@ -70,10 +65,9 @@ def EfficientNetModule(args, transfer_learning = False, network = 'B0', NClasses
 			    include_top=True,
 			    weights=None,
 			    input_shape=dim,
-			    classes=NClasses,
+			    classes=args.NClasses,
 			    classifier_activation="softmax",
 				)
-
 
 	model.summary()
 

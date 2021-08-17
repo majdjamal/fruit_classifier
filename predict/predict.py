@@ -34,14 +34,19 @@ def predict(model, img_path, args):
 	:@param img_path: Path to image
 	:@param args: Program arguments
 	"""
-	
+
 	try:
 		model.load_weights(args.path)
 	except:
 		raise ValueError(" \n Weights does not exist or does not match chosen network!")
 
 	dim = (224,224)
-	image = plt.imread(img_path)
+
+	try:
+		image = plt.imread(args.img_path)
+	except:
+		raise ValueError(' Image does not exist in the given directory!')
+
 	image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 	image = cv2.normalize(image, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) # CV_32F: 4-byte floating point (float)
 	image = image[:,:,:3]
@@ -59,7 +64,7 @@ def predict(model, img_path, args):
 	classification = argmax(pred, 1)
 	classification = np.array(classification)
 
-	print(img_path, ': ', refined_preds[0], ' | ', refined_preds[1], ' | ', refined_preds[2], ' | ', refined_preds[3])
+	print(args.img_path, ': ', refined_preds[0], ' | ', refined_preds[1], ' | ', refined_preds[2], ' | ', refined_preds[3])
 
 def evaluate(model, args):
 	""" Evaluates a trained model on Test Data.
@@ -72,12 +77,15 @@ def evaluate(model, args):
 	from data.loaddata import LoadData, LoadTest, LoadPhotos
 
 	try:
-		model.load_weights('weights/mobilenet_transfer.ckpt')
+		model.load_weights(args.path)
 	except:
 		raise ValueError('\n File does not exist. Provide the right path with the command --path *PATH-TO-WEIGHT*.')
 
-	#X_test, y_test = LoadTest()
-	X_test, y_test = LoadPhotos()
+	if args.webcam_photos:
+		X_test, y_test = LoadPhotos()
+	else:
+		X_test, y_test = LoadTest()
+
 	y_test_hot = one_hot(y_test, args.NClasses)
 
 	test_loss, test_acc = model.evaluate(X_test, y_test)

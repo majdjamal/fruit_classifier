@@ -1,7 +1,6 @@
 
 __author__ = 'Majd Jamal'
 
-
 import ssl
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,8 +12,7 @@ from tensorflow_addons.optimizers import SGDW
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-
-def ResNet101Module(args, transfer_learning = False, NClasses = 15):
+def ResNet101Module(args):
 	""" Initializes and compiles InceptionV3.
 	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
 	:@param NClasses: Number of labels
@@ -23,7 +21,7 @@ def ResNet101Module(args, transfer_learning = False, NClasses = 15):
 	"""
 	dim = (224,224, 3)
 
-	if transfer_learning:
+	if args.transfer_learning:
 
 		model = Sequential()
 
@@ -31,13 +29,12 @@ def ResNet101Module(args, transfer_learning = False, NClasses = 15):
     	include_top=False,
     	weights='imagenet',
     	input_shape=dim,
-    	classes=NClasses
+    	classes=args.NClasses
 		)
 
 		model.add(res)
-		model.add(GlobalAveragePooling2D()) #input_shape=effie.output_shape[1:]))
-		model.add(Dense(NClasses, activation = 'softmax'))
-
+		model.add(GlobalAveragePooling2D())
+		model.add(Dense(args.NClasses, activation = 'softmax'))
 
 	else:
 
@@ -45,7 +42,7 @@ def ResNet101Module(args, transfer_learning = False, NClasses = 15):
     	include_top=True,
     	weights=None,
     	input_shape=dim,
-    	classes=NClasses
+    	classes=args.NClasses
 		)
 
 	model.summary()

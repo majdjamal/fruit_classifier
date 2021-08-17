@@ -32,7 +32,7 @@ def RealTimeClassification(model, args):
 	"""
 
 	try:
-		model.load_weights('weights/mobilenet_transfer.ckpt')
+		model.load_weights(args.path)
 	except:
 		raise ValueError(" \n Weights does not exist or does not match chosen network!")
 
@@ -50,7 +50,7 @@ def RealTimeClassification(model, args):
 
 	    pred = model.predict(image.reshape(1,224,224,3))
 
-	    uncover_preds = np.argsort(-1*pred[0,:])[:4]
+	    uncover_preds = np.argsort(-1*pred[0,:])[:3]
 
 	    preds = []
 	    labels = []
@@ -79,43 +79,61 @@ def RealTimeClassification(model, args):
 	    ##
 	    ##	Initializing GUI data
 	    ##
-	    y_pos = np.arange(4)
+	    y_pos = np.arange(3)
 	    img = np.zeros((224,224, 3))
-	    preds = [1,1,1,1]
-	    labels = ['-','-','-','-']
+	    preds = [1,1,1]
+	    labels = ['-','-','-']
 
 	    ##
 	   	## GUI Setup
 	    ##
 	    mpl.rcParams['toolbar'] = 'None'
-	    fig, axs = plt.subplots(2, figsize=(10.5,6.5))
+	    fig, axs = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]}, figsize=(6.5,6.5))
+
+
 	    fig.patch.set_facecolor('lightsteelblue')
-	    axs[0].set_title('Real-Time Image Classification  \n')
+	    axs[0].set_title('Real-Time Image Classification  \n', fontweight="bold")
 
 	    # Plot image on GUI
 	    plotted_image = axs[0].imshow(img)
 	    axs[0].axis('off')
 	    
+
+	    #text = axs[0].text(0, 0, '3FPS',
+	    #ha="center", va="center", color="w")
+
 	    # Plot predictions in a horizontal bar chart
 	    bars = axs[1].barh(y_pos, preds, align='center', color = '#4169E1')
 	    lbls = axs[1].set_yticklabels(labels)
 	    
+	    axs[1].spines['bottom'].set_color('lightsteelblue')
+	    axs[1].spines['top'].set_color('lightsteelblue') 
+	    axs[1].spines['right'].set_color('lightsteelblue')
+	    axs[1].spines['left'].set_color('lightsteelblue')
+	    axs[1].margins(0.01, 0.05)
+	    axs[1].set_facecolor('#e1ebec')
+
 	    ##
 	    ##	Prediction bar color scheme
 	    ##
 	    bars[0].set_color('#193f6e')
 	    bars[1].set_color('#3b6ba5')
 	    bars[2].set_color('#72a5d3')
-	    bars[3].set_color('#b1d3e3')
-	    axs[1].set_facecolor('#e1ebec')
+	    
+	    #bars[3].set_color('#b1d3e3')
 	    
 	    ##
 	   	## GUI Setup
 	    ##
 	    axs[1].invert_yaxis()
 	    axs[1].set_yticks(y_pos)
-	    axs[1].tick_params(axis='both', which='major', labelsize=14)
-	    axnext = plt.axes([0.8, 0.9, 0.17, 0.075])
+	    axs[1].set_xticks([0,0.5, 1])
+	    axs[1].set_xticklabels(['0%','50%','100%'])
+	    axs[1].tick_params(axis='both', which='major', labelsize=12)
+	    fig.subplots_adjust(hspace=0.05, right = 0.8, left = 0.2, bottom=0.15) # **
+
+
+	    axnext = plt.axes([0.45, 0.03, 0.1, 0.05])
 	    btnClose = Button(axnext, 'Close', color='#8b74bd')
 	    btnClose.on_clicked(closeApp)
 	    plt.ion()
