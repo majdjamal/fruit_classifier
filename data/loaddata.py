@@ -4,7 +4,7 @@ __author__ = 'Majd Jamal'
 import numpy as np
 import matplotlib.pyplot as plt
 
-def LoadData():
+def LoadData() -> np.ndarray:
     """ Loads data for training, i.e. training and validation set.
     :return X_train: Traning patterns, shape = (Npts, height, width depth)
     :return y_train: Traning targets, shape = (Npts, 1)
@@ -21,7 +21,7 @@ def LoadData():
     return X_train.transpose([3, 0,1,2]), X_val.transpose([3, 0,1,2]), y_train.T, y_val.T
 
 
-def LoadTest():
+def LoadTest() -> np.ndarray:
     """ Loads data for evaluation, i.e. the test set.
     :return X_test: Test patterns, shape = (Npts, height, width depth)
     :return y_test: Test targets, shape = (Npts, 1)
@@ -32,7 +32,7 @@ def LoadTest():
     return X_test.transpose([3, 0,1,2]), y_test.T
 
 
-def LoadPhotos():
+def LoadPhotos() -> np.ndarray:
     """ Generates and loads webcam images, used to evaluate the real-time image classification app.
     :return X_webcam: Traning patterns, shape = (Npts, height, width depth)
     :return y_webcam: Traning targets, shape = (Npts, 1)
@@ -50,7 +50,9 @@ def LoadPhotos():
     builder = tfds.ImageFolder('data/webcam_photos/')
     ds_webcam = builder.as_dataset(split='train', shuffle_files=True)
     ds_webcam = tfds.as_numpy(ds_webcam)
+
     Npts = len(ds_webcam)
+
     ##
     ## Initialize data matricies
     ##
@@ -66,7 +68,6 @@ def LoadPhotos():
 
       img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
       img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-
 
       ## Store data in training set
       if ind < Npts:

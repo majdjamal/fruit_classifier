@@ -18,12 +18,13 @@ def GenerateData(args):
 
 	print('=-=-=-=- Starting Data Generator -=-=-=-=')
 
-	def noise_generator(img, ind):
+	def noise_generator(img: np.ndarray, ind: int) -> np.ndarray:
 	  """ Adds noise to images.
 	  :@param img: image array with shape (Height, Width, Depth)
 	  :@param ind: current iteration state
 	  :return img: image with noise if requirements are meet.
 	  """
+
 	  if ind % 5 == 0:
 	    img = random_noise(img, mode='s&p',amount=args.max_noise)
 	  elif ind % 2 == 0:
@@ -53,16 +54,17 @@ def GenerateData(args):
 	##
 	## Initialize data matricies
 	##
-	X_train = np.zeros((224, 224, 3, Npts_train - Npts_val))
-	y_train = np.zeros((1, Npts_train - Npts_val))
+	X_train: np.ndarray = np.zeros((224, 224, 3, Npts_train - Npts_val))
+	y_train: np.ndarray = np.zeros((1, Npts_train - Npts_val))
 
-	X_val = np.zeros((224, 224, 3, Npts_val))
-	y_val = np.zeros((1, Npts_val))
+	X_val: np.ndarray = np.zeros((224, 224, 3, Npts_val))
+	y_val: np.ndarray = np.zeros((1, Npts_val))
 
-	X_test = np.zeros((224,224, 3, Npts_test))
-	y_test = np.zeros((1, Npts_test))
+	X_test: np.ndarray = np.zeros((224,224, 3, Npts_test))
+	y_test: np.ndarray = np.zeros((1, Npts_test))
 
-	def generate(ds, training_data = False, Npts = None):
+
+	def generate(ds, training_data: bool = False, Npts: int = None):
 		""" Generates data. Reading images files and converts them to
 		NumPy arrays.
 		:@param ds: opened dataset in ImageFolder format.
