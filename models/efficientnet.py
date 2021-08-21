@@ -12,7 +12,7 @@ from tensorflow_addons.optimizers import SGDW
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def EfficientNetModule(args):
+def EfficientNetModule(args) -> Sequential:
 	""" Initializes and compiles EfficientNet.
 	:@param args: Network arguments
 	:return model: A compiled network

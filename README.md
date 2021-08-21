@@ -5,8 +5,7 @@ This is a project in the Deep Learning course [DD2424](https://www.kth.se/studen
 
 ## Abstract
 
-
-Deep networks are growing deeper and require more energy resources for training. Previous research has shown that the deep learning field will stop progressing if contributors do not produce lighter and efficient network architecture. This study utilizes MobileNet, which is the state-of-the-art network for mobile devices, to classify images of fruits and vegetables, and compares its performances to networks with more extensive architectures. Four networks were trained from randomly initialized weights and Transfer Learning using ImageNet weights. MobileNet trained with Transfer Learning produced a top-1 accuracy of 97.5% and performed like the more extensive network architectures. The larger networks required longer training sessions to converge. This study uses the top-1 MobileNet model to conclude a real-time image classification application that classifies fruits and vegetables and can be used by any computer that has a webcam.
+Deep networks are growing deeper and require more energy resources for training. Previous research has shown that the deep learning field will stop progressing if contributors do not produce lighter and efficient network architectures. This study utilizes MobileNet, the state-of-the-art network for mobile devices, to classify images of fruits and vegetables, and compares its performances to networks with more extensive architectures. Networks were trained from randomly initialized weights and Transfer Learning using ImageNet weights. MobileNet trained with Transfer Learning produced a top-1 accuracy of 96.8% and performed like the more extensive network architectures. This study uses the top-1 MobileNet model to conclude a production-grade real-time image classification app of fruits and vegetables.
 
 ## Test The Program
 
@@ -51,7 +50,7 @@ python3 main.py --train --model "mobilenet"
 ```bash
 python3 main.py --train --model "mobilenet" --transfer_learning
 ```
-> **_NOTE:_**  --model takes the following arguments: ['mobilenet', 'efficientnetb0', 'efficientnetb5', 'resnet']
+> **_NOTE:_**  Training supplements: scheduler, pass --scheduler; fine tune a pre-trained model, pass --fine_tune 
 
 ----
 

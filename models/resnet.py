@@ -12,7 +12,7 @@ from tensorflow_addons.optimizers import SGDW
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def ResNet101Module(args):
+def ResNet101Module(args) -> Sequential:
 	""" Initializes and compiles InceptionV3.
 	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
 	:@param NClasses: Number of labels

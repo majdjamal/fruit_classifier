@@ -28,6 +28,11 @@ parser.add_argument('--predict',  action = 'store_true', default=False,
 parser.add_argument('--webcam_photos',  action = 'store_true', default=False,
 	help='Evaluate network with webcam_photos.')
 
+parser.add_argument('--scheduler',  action = 'store_true', default=False,
+	help='Using a learning rate decay scheduler. Default: False')
+
+parser.add_argument('--fine_tune',  action = 'store_true', default=False,
+	help='Fine tune a pre trained model. Default: False')
 
 parser.add_argument('--max_brightness', type = float, default=0.95,
 	help='Image Augumentation Argument. Maximum allowed brightness when generating the training set. Default: 0.95')
@@ -40,12 +45,8 @@ parser.add_argument('--max_noise', type = float, default=0.22,
 parser.add_argument('--min_noise', type = float, default=0.12,
 	help='Image Augumentation Argument. Minimum allowed pixel distortion when generating the training set. Default: 0.12 ')
 
-
 parser.add_argument('--transfer_learning', action ='store_true', default=False,
 	help='Train with Transfer Learning')
-
-parser.add_argument('--img_aug', type = bool, default=False,
-	help='Bool, set "False" to construct networks with random initalization.')
 
 parser.add_argument('--eta', type = float, default=1e-3,
 	help='Learning Rate. Default: 0.001')
@@ -65,8 +66,8 @@ parser.add_argument('--dropout', type = float, default=2e-3,
 parser.add_argument('--epochs', type = int, default=700,
 	help='Epochs. Default: 700')
 
-parser.add_argument('--path', type = str, default='weights/mobilenet_transfer.ckpt',
-	help='Path to pre trained model. Default: weights/mobilenet_transfer.ckpt')
+parser.add_argument('--path', type = str, default='weights/original_mobilenet.ckpt',
+	help='Path to pre trained model. Default: weights/original_mobilenet.ckpt')
 
 parser.add_argument('--img_path', type = str, default='data/test_data/apple.png',
 	help='Path to the image for prediction.')

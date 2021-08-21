@@ -15,11 +15,14 @@ def train(model, args):
   print(args)
   X_train, X_val, y_train, y_val = LoadData()
 
-  #model.load_weights(args.path)
+  if args.fine_tune:
+  
+    try:
+      model.load_weights(args.path)
+    else:
+      raise ValueError(" \n Weights does not exist or does not match chosen network!")
 
-  ###
-  ### Image Augmentation
-  ###
+  # Image Augmentation
   generator = ImageDataGenerator(
     rotation_range = 90,
     vertical_flip = True,
@@ -27,10 +30,11 @@ def train(model, args):
     width_shift_range=0.1,
     dtype = float)
 
-  ###
-  ### Scheduler
-  ###
-  scheduler = lambda epoch, lr: lr * (1/(1 + 0.04 * epoch))
+  def scheduler(epoch: int, lr: float) -> float:
+    """ Learning rate decay
+    """
+    return lr * (1/(1 + 0.04 * epoch))
+
   sch_callback = LearningRateScheduler(scheduler)
 
   if args.transfer_learning:
@@ -38,12 +42,19 @@ def train(model, args):
   else:
     saving_path = "data/result/training_weights/"+args.model
 
-  cp_callback = ModelCheckpoint(filepath=saving_path+"/cp-{epoch:04d}.ckpt",
-                                save_weights_only=True, monitor= 'val_accuracy', save_best_only=True,
-                                verbose=1)
 
-  training_history = model.fit(generator.flow(X_train, y_train[:,0], batch_size=32), epochs=int(args.epochs),
-    validation_data=(X_val, y_val),
-    callbacks=[cp_callback]) #, sch_callback])
+  cp_callback = ModelCheckpoint(filepath = saving_path+"/cp-{epoch:04d}.ckpt",
+                                save_weights_only = True, 
+                                monitor = 'val_accuracy', 
+                                save_best_only = True,
+                                verbose = 1
+                                )
+
+  training_history = model.fit(
+    generator.flow(X_train, y_train[:,0], batch_size = 32), 
+    epochs = args.epochs,
+    validation_data = (X_val, y_val),
+    callbacks = [cp_callback, sch_callback] if args.scheduler else [cp_callback]
+    )
 
   np.save(saving_path + '/history.npy', training_history.history)  # history1=np.load('history1.npy',allow_pickle='TRUE').item()

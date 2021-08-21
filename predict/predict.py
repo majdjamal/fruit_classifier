@@ -28,7 +28,7 @@ ind_to_class = {
 13:'Tomato',
 14:'Watermelon'}
 
-def predict(model, img_path, args):
+def predict(model, args):
 	""" Predicts a label for one image.
 	:@param model: A trained network
 	:@param img_path: Path to image
@@ -115,6 +115,8 @@ def evaluate(model, args):
 	### Confusion
 	###
 	confusion = confusion_matrix(y_test, y_pred)
+
+	
 	plt.imshow(confusion, cmap ='Blues')
 	plt.ylabel('True Label')
 	plt.yticks(np.arange(0,args.NClasses))
