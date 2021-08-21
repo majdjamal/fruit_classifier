@@ -66,5 +66,5 @@ python3 main.py --evaluate --model "mobilenet" --path 'MyPath/To/Weights'
 ----
 
 ### Graphical User Interface
-<img src="https://i.ibb.co/McKnL80/GUI.png" width="300" height="400">
-(Figure 1. Graphical User Interface. The first window shows captured photos live from the user’s webcam. The second window includes prediction bars. The demonstration shows 99% Green Apple. At the bottom, there is a purple button to close the app.)
+<div style="text-align:center"><img src="https://i.ibb.co/McKnL80/GUI.png" width="300" height="400">
+(Figure 1. Graphical User Interface. The first window shows captured photos live from the user’s webcam. The second window includes prediction bars. The demonstration shows 99% Green Apple. At the bottom, there is a purple button to close the app.)</div>
