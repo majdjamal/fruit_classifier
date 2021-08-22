@@ -53,9 +53,6 @@ def LoadPhotos() -> np.ndarray:
 
     Npts = len(ds_webcam)
 
-    ##
-    ## Initialize data matricies
-    ##
     X_webcam = np.zeros((224, 224, 3, Npts))
     y_webcam = np.zeros((1, Npts))
 
@@ -69,7 +66,6 @@ def LoadPhotos() -> np.ndarray:
       img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
       img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
-      ## Store data in training set
       if ind < Npts:
 
         X_webcam[:,:,:, ind] = img

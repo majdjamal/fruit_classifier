@@ -9,7 +9,7 @@ from skimage.util import random_noise
 from skimage import exposure
 from tqdm import tqdm
 
-def GenerateData(args):
+def GenerateData(args) -> None:
 	""" Generates data and saves it in .npy files.
 	:@param args: program arguments
 	"""

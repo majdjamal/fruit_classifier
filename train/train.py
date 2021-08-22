@@ -6,7 +6,7 @@ from data.loaddata import LoadData, LoadTest
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-def train(model, args):
+def train(model, args) -> None:
   """ Train the network.
   :@param model: the network, in TensorFlow build format.
   :@param args: arguments from the parser
@@ -16,7 +16,7 @@ def train(model, args):
   X_train, X_val, y_train, y_val = LoadData()
 
   if args.fine_tune:
-  
+
     try:
       model.load_weights(args.path)
     else:
@@ -44,14 +44,14 @@ def train(model, args):
 
 
   cp_callback = ModelCheckpoint(filepath = saving_path+"/cp-{epoch:04d}.ckpt",
-                                save_weights_only = True, 
-                                monitor = 'val_accuracy', 
+                                save_weights_only = True,
+                                monitor = 'val_accuracy',
                                 save_best_only = True,
                                 verbose = 1
                                 )
 
   training_history = model.fit(
-    generator.flow(X_train, y_train[:,0], batch_size = 32), 
+    generator.flow(X_train, y_train[:,0], batch_size = 32),
     epochs = args.epochs,
     validation_data = (X_val, y_val),
     callbacks = [cp_callback, sch_callback] if args.scheduler else [cp_callback]

@@ -11,7 +11,7 @@ from tensorflow_addons.metrics import F1Score
 from sklearn.metrics import confusion_matrix, recall_score, precision_score
 
 
-ind_to_class = {
+ind_to_class: dict = {
 0 : 'Green Apple',
 1:'Red Apple',
 2:'Banana',
@@ -28,7 +28,7 @@ ind_to_class = {
 13:'Tomato',
 14:'Watermelon'}
 
-def predict(model, args):
+def predict(model, args) -> None:
 	""" Predicts a label for one image.
 	:@param model: A trained network
 	:@param img_path: Path to image
@@ -66,7 +66,7 @@ def predict(model, args):
 
 	print(args.img_path, ': ', refined_preds[0], ' | ', refined_preds[1], ' | ', refined_preds[2], ' | ', refined_preds[3])
 
-def evaluate(model, args):
+def evaluate(model, args) -> None:
 	""" Evaluates a trained model on Test Data.
 	This function computes F1Score, Recall,
 	Precision, and a Confusion Matrix.
@@ -116,7 +116,7 @@ def evaluate(model, args):
 	###
 	confusion = confusion_matrix(y_test, y_pred)
 
-	
+
 	plt.imshow(confusion, cmap ='Blues')
 	plt.ylabel('True Label')
 	plt.yticks(np.arange(0,args.NClasses))

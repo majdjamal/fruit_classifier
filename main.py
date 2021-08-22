@@ -8,63 +8,76 @@ from utils.pars import args
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Removed excessive Tensorflow warnings
 
-##
-##	Setup a network
-##
-if 'mobile' in args.model.lower(): 
-	from models.mobilenet import MobileNetModule
-	model = MobileNetModule(args = args)
-	print('\n =-=-=-=- MobileNetV1 Loaded -=-=-=-= \n')
+def setup_network():
+	""" Setup and returns a deep network based on user input.
+	"""
+	if 'mobile' in args.model.lower():
+		from models.mobilenet import MobileNetModule
+		model = MobileNetModule(args = args)
+		print('\n =-=-=-=- MobileNetV1 Loaded -=-=-=-= \n')
 
-elif 'b0' in args.model.lower():
-	from models.efficientnet import EfficientNetModule
-	model = EfficientNetModule(network = 'B0', args = args)
-	print('\n =-=-=-=- EfficientNetB0 Loaded -=-=-=-= \n')
+	elif 'b0' in args.model.lower():
+		from models.efficientnet import EfficientNetModule
+		model = EfficientNetModule(network = 'B0', args = args)
+		print('\n =-=-=-=- EfficientNetB0 Loaded -=-=-=-= \n')
 
-elif 'b5' in args.model.lower():
-	from models.efficientnet import EfficientNetModule
-	model = EfficientNetModule(network = 'B5', args = args)
-	print('\n =-=-=-=- EfficientNetB5 Loaded -=-=-=-= \n')
+	elif 'b5' in args.model.lower():
+		from models.efficientnet import EfficientNetModule
+		model = EfficientNetModule(network = 'B5', args = args)
+		print('\n =-=-=-=- EfficientNetB5 Loaded -=-=-=-= \n')
 
-elif 'resnet' in args.model.lower():
-	from models.resnet import ResNet101Module
-	model = ResNet101Module(args = args)
-	print('\n =-=-=-=- ResNet101 Loaded -=-=-=-= \n')
-  
-else:
-	raise ValueError("Model does not exists! Valid models are [mobilenet, efficientnetb0, efficientnetb5]. Try again!")
+	elif 'resnet' in args.model.lower():
+		from models.resnet import ResNet101Module
+		model = ResNet101Module(args = args)
+		print('\n =-=-=-=- ResNet101 Loaded -=-=-=-= \n')
 
-##
-##	Setup an operation process
-##
-if args.generate_data:  
+	else:
+		raise ValueError("Model does not exists! Valid models are [mobilenet, efficientnetb0, efficientnetb5]. Try again!")
 
-	from data.gendata import GenerateData
-	GenerateData(args)
+	return model
 
-elif args.train: 
 
-	from train.train import train
-	train(model, args)
-	print('\n =-=-=-=- Loading training script -=-=-=-= \n')
+def setup_process(model, args) -> None:
+	""" Starts a process based on user input. E.g., train a network.
+	"""
 
-elif args.evaluate:
+	if args.generate_data:
 
-	from predict.predict import evaluate
-	evaluate(model, args)
-	print('\n =-=-=-=- Loading evaluation script -=-=-=-= \n')
+		from data.gendata import GenerateData
+		GenerateData(args)
 
-elif args.realtime:
-	import warnings
-	warnings.filterwarnings("ignore")
+	elif args.train:
 
-	from predict.realtime import RealTimeClassification
-	RealTimeClassification(model, args)
-	print('\n =-=-=-=- Loading Real-Time Image Classification script -=-=-=-= \n')
+		from train.train import train
+		train(model, args)
+		print('\n =-=-=-=- Loading training script -=-=-=-= \n')
 
-elif args.predict:
-	from predict.predict import predict
-	predict(model, args)
-	print('\n =-=-=-=- Loading prediction script -=-=-=-= \n')
-else:
-	raise ValueError('No operation were given! Please, specify what you want to do. For example, train a network with --train.')
+	elif args.evaluate:
+
+		from predict.predict import evaluate
+		evaluate(model, args)
+		print('\n =-=-=-=- Loading evaluation script -=-=-=-= \n')
+
+	elif args.realtime:
+		import warnings
+		warnings.filterwarnings("ignore")
+
+		from predict.realtime import RealTimeClassification
+		RealTimeClassification(model, args)
+		print('\n =-=-=-=- Loading Real-Time Image Classification script -=-=-=-= \n')
+
+	elif args.predict:
+		from predict.predict import predict
+		predict(model, args)
+		print('\n =-=-=-=- Loading prediction script -=-=-=-= \n')
+	else:
+		raise ValueError('No operation were given! Please, specify what you want to do. For example, train a network with --train.')
+
+
+def main() -> None:
+
+	model = setup_network()
+	setup_process(model, args)
+
+if __name__ == "__main__":
+	main()

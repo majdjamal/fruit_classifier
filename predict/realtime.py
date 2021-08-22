@@ -8,6 +8,13 @@ from matplotlib.widgets import Button
 
 class Application:
 
+	bars: mpl.container.BarContainer
+	plotted_image: mpl.image.AxesImage
+	btnClose: mpl.widgets.Button
+
+	ind_to_class: dict
+	dim: tuple
+
 	def __init__(self, model, args):
 
 		self.model = model
@@ -18,7 +25,7 @@ class Application:
 		self.plotted_image = None # Image on the GUI
 		self.btnClose = None # Close button
 
-		self.ind_to_class: dict = {
+		self.ind_to_class = {
 			0 : 'Green Apple',
 			1:'Red Apple',
 			2:'Banana',
@@ -36,11 +43,11 @@ class Application:
 			14:'Watermelon'}
 
 
-		self.dim: tuple = (224,224)
+		self.dim = (224,224)
 
 
 	def image_processing(self, img: np.ndarray) -> list:
-		""" Pre-processes and classifies images. 
+		""" Pre-processes and classifies images.
 		:@param img: An image with shape (height, width, channels)
 		:return preds: Top 4 prediction stored in a list
 		:return labels: Labels for the top 4 predictions stored in a list
@@ -48,10 +55,10 @@ class Application:
 
 		image = cv2.resize(img, self.dim, interpolation = cv2.INTER_AREA)
 
-		image = cv2.normalize(image, None, 
-			alpha=0, 
-			beta=1, 
-			norm_type=cv2.NORM_MINMAX, 
+		image = cv2.normalize(image, None,
+			alpha=0,
+			beta=1,
+			norm_type=cv2.NORM_MINMAX,
 			dtype=cv2.CV_32F)
 
 		pred = self.model.predict(image.reshape(1,224,224,3))
@@ -66,9 +73,9 @@ class Application:
 			preds.append(pred[0][i])
 			labels.append(self.ind_to_class[i])
 
-		return preds, labels	
-	
-	def GUI(self):
+		return preds, labels
+
+	def GUI(self) -> None:
 		""" Setup and start the graphical user interface with Matplotlib.
 		"""
 
@@ -100,14 +107,14 @@ class Application:
 		# Plot image on GUI
 		self.plotted_image = axs[0].imshow(img)
 		axs[0].axis('off')
-		
+
 
 		# Plot predictions in a horizontal bar chart
 		bars = axs[1].barh(y_pos, preds, align='center', color = '#4169E1')
 		lbls = axs[1].set_yticklabels(labels)
-		
+
 		axs[1].spines['bottom'].set_color('lightsteelblue')
-		axs[1].spines['top'].set_color('lightsteelblue') 
+		axs[1].spines['top'].set_color('lightsteelblue')
 		axs[1].spines['right'].set_color('lightsteelblue')
 		axs[1].spines['left'].set_color('lightsteelblue')
 		axs[1].margins(0.01, 0.05)
@@ -119,9 +126,9 @@ class Application:
 		bars[0].set_color('#193f6e')
 		bars[1].set_color('#3b6ba5')
 		bars[2].set_color('#72a5d3')
-		
+
 		self.bars = bars
-		
+
 		##
 	   	## GUI Setup
 		##
@@ -134,16 +141,14 @@ class Application:
 
 		axnext = plt.axes([0.45, 0.03, 0.1, 0.05])
 		self.btnClose = Button(axnext, 'Close', color='#8b74bd')
-
 		self.btnClose.on_clicked(lambda var: sys.exit(1))
-
 		self.axs = axs
 
 		plt.ion()
 		plt.show()
 
 
-	def start(self):
+	def start(self) -> None:
 
 		self.GUI()
 
@@ -156,9 +161,9 @@ class Application:
 
 			return_value, image = camera.read()	# (1) captures a photo
 			image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
- 			
+
 			preds, labels = self.image_processing(image) # (2) sends the image to the classifier
-			
+
 			##
 			## (3) Update data on the GUI
 			##
@@ -170,7 +175,7 @@ class Application:
 			self.axs[1].set_yticklabels(labels)
 
 
-def RealTimeClassification(model, args):
+def RealTimeClassification(model, args) -> None:
 	""" Real-Time Image Classification. Connects your webcam
 	to a deep neural network and classifies which fruit it is seeing.
 	:@param model: A trained network
