@@ -180,6 +180,19 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 def MobileNetModule(args) -> Sequential:
 	""" Initializes and compiles MobileNetV1.
 	:@param args: System arguments, type: argparse.ArgumentParser
+
+	Experiment results are documented in table 1.
+
+	-----------------------------------------------------------------
+	|	      Model        |			  Accuracy					|
+	|		               |	Random Init.  |   Transfer Learning |
+	----------------------------------------------------------------|
+	|	MobileNetV1		   | 		92.7%	  |        96.8%		|
+	|	MobileNet Config   |        93.9%     |          -          |
+	-----------------------------------------------------------------
+	(Table 1. Performances of MobileNet on the fruit and vegetable dataset.
+	Note. Transfer Learning for MobileNet Config is missing because there was
+	not an available pre_trained model for the configured architecture.)
 	"""
 
 	model = MobileNetFromScratch(
