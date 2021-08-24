@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def GenerateData(args) -> None:
 	""" Generates data and saves it in .npy files.
-	:@param args: program arguments
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
 	dim = (224, 224)

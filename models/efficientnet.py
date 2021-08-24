@@ -12,10 +12,11 @@ from tensorflow_addons.optimizers import SGDW
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def EfficientNetModule(args) -> Sequential:
+def EfficientNetModule(network_type: str, args) -> Sequential:
 	""" Initializes and compiles EfficientNet.
-	:@param args: Network arguments
-	:return model: A compiled network
+	:@param network_type: Tag indicating which version of EfficientNet to initialize.
+	Accepts 'B0' and 'B5'.
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
 	dim = (224,224, 3)
@@ -24,7 +25,7 @@ def EfficientNetModule(args) -> Sequential:
 
 		model = Sequential()
 
-		if network == 'B0':
+		if network_type == 'B0':
 
 			effie = EfficientNetB0(
 			    include_top=False,
@@ -33,7 +34,7 @@ def EfficientNetModule(args) -> Sequential:
 			    classes=args.NClasses
 			)
 
-		elif network == 'B5':
+		elif network_type == 'B5':
 
 			effie = EfficientNetB5(
 			    include_top=False,
@@ -49,7 +50,7 @@ def EfficientNetModule(args) -> Sequential:
 
 	else:
 
-		if network == 'B0':
+		if network_type == 'B0':
 
 			model = EfficientNetB0(
 			    include_top=True,
@@ -59,7 +60,7 @@ def EfficientNetModule(args) -> Sequential:
 			    classifier_activation="softmax",
 				)
 
-		elif network == 'B5':
+		elif network_type == 'B5':
 
 			model = EfficientNetB5(
 			    include_top=True,

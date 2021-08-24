@@ -8,18 +8,28 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 def train(model, args) -> None:
   """ Train the network.
-  :@param model: the network, in TensorFlow build format.
-  :@param args: arguments from the parser
+  :@param model: Deep Network, type: tensorflow.keras.Sequential
+  :@param args: System arguments, type: argparse.ArgumentParser
   """
   print('=-=-=-=-=- Network Arguments -=-=-=-=-=')
   print(args)
+
   X_train, X_val, y_train, y_val = LoadData()
+
+  opt = SGDW(
+    weight_decay = args.wd,
+    learning_rate = args.eta,
+    momentum = args.roh)
+
+  model.compile(optimizer = opt,
+    loss = SparseCategoricalCrossentropy(),
+    metrics = ['accuracy'])
 
   if args.fine_tune:
 
     try:
       model.load_weights(args.path)
-    else:
+    except:
       raise ValueError(" \n Weights does not exist or does not match chosen network!")
 
   # Image Augmentation

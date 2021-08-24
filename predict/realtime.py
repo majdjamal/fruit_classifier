@@ -81,7 +81,7 @@ class Application:
 
 		print('=-=-=-=- Starting Application -=-=-=-= \n')
 
-		def closeApp(var):
+		def closeApp(var) -> None:
 			print('Been Here!')
 			print('\x1b[31m=-=-=-=- Program is stopped! -=-=-=-= \x1b[39m')
 			sys.exit(1)
@@ -178,8 +178,8 @@ class Application:
 def RealTimeClassification(model, args) -> None:
 	""" Real-Time Image Classification. Connects your webcam
 	to a deep neural network and classifies which fruit it is seeing.
-	:@param model: A trained network
-	:@param args: Program arguments
+	:@param model: Deep Network, type: tensorflow.keras.Sequential
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
 	try:

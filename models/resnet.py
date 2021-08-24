@@ -13,11 +13,9 @@ from tensorflow_addons.optimizers import SGDW
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def ResNet101Module(args) -> Sequential:
-	""" Initializes and compiles InceptionV3.
-	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
-	:@param NClasses: Number of labels
-	:@param args: Program arguments
-	:return model: A compiled network
+	""" Initializes and compiles ResNet101.
+	:@param model: Deep Network, type: tensorflow.keras.Sequential
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 	dim = (224,224, 3)
 

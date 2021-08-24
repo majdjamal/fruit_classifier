@@ -6,7 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils.pars import args
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Removed excessive Tensorflow warnings
+# Removes Tensorflow warnings, used only when demonstrating the project results.
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def setup_network():
 	""" Setup and returns a deep network based on user input.
@@ -18,12 +19,12 @@ def setup_network():
 
 	elif 'b0' in args.model.lower():
 		from models.efficientnet import EfficientNetModule
-		model = EfficientNetModule(network = 'B0', args = args)
+		model = EfficientNetModule(network_type = 'B0', args = args)
 		print('\n =-=-=-=- EfficientNetB0 Loaded -=-=-=-= \n')
 
 	elif 'b5' in args.model.lower():
 		from models.efficientnet import EfficientNetModule
-		model = EfficientNetModule(network = 'B5', args = args)
+		model = EfficientNetModule(network_type = 'B5', args = args)
 		print('\n =-=-=-=- EfficientNetB5 Loaded -=-=-=-= \n')
 
 	elif 'resnet' in args.model.lower():
@@ -39,37 +40,40 @@ def setup_network():
 
 def setup_process(model, args) -> None:
 	""" Starts a process based on user input. E.g., train a network.
+	:@param model: Deep Network, type: tensorflow.keras.Sequential
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
-
 	if args.generate_data:
 
 		from data.gendata import GenerateData
+		print('\n =-=-=-=- Loading data generator -=-=-=-= \n')
 		GenerateData(args)
 
 	elif args.train:
 
 		from train.train import train
-		train(model, args)
 		print('\n =-=-=-=- Loading training script -=-=-=-= \n')
+		train(model, args)
 
 	elif args.evaluate:
 
 		from predict.predict import evaluate
-		evaluate(model, args)
 		print('\n =-=-=-=- Loading evaluation script -=-=-=-= \n')
+		evaluate(model, args)
 
 	elif args.realtime:
 		import warnings
 		warnings.filterwarnings("ignore")
 
 		from predict.realtime import RealTimeClassification
-		RealTimeClassification(model, args)
 		print('\n =-=-=-=- Loading Real-Time Image Classification script -=-=-=-= \n')
+		RealTimeClassification(model, args)
 
 	elif args.predict:
 		from predict.predict import predict
-		predict(model, args)
 		print('\n =-=-=-=- Loading prediction script -=-=-=-= \n')
+		predict(model, args)
+
 	else:
 		raise ValueError('No operation were given! Please, specify what you want to do. For example, train a network with --train.')
 

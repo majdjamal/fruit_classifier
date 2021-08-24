@@ -5,7 +5,6 @@ import cv2
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from utils.plotter import plotter
 from tensorflow import one_hot, argmax
 from tensorflow_addons.metrics import F1Score
 from sklearn.metrics import confusion_matrix, recall_score, precision_score
@@ -30,9 +29,8 @@ ind_to_class: dict = {
 
 def predict(model, args) -> None:
 	""" Predicts a label for one image.
-	:@param model: A trained network
-	:@param img_path: Path to image
-	:@param args: Program arguments
+	:@param model: Deep Network, type: tensorflow.keras.Sequential
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
 	try:
@@ -70,8 +68,8 @@ def evaluate(model, args) -> None:
 	""" Evaluates a trained model on Test Data.
 	This function computes F1Score, Recall,
 	Precision, and a Confusion Matrix.
-	:@param model: A trained network
-	:@param args: Program arguments
+	:@param model: Deep Network, type: tensorflow.keras.Sequential
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
 	from data.loaddata import LoadData, LoadTest, LoadPhotos

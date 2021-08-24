@@ -15,11 +15,12 @@ from keras.utils import data_utils
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dropout: float = 0.001):
-	""" Re-implements the original MobileNet from scratch. 
+def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dropout: float = 0.001, alpha = 1., depth_multiplier = 1, config: bool = False):
+	""" Re-implements the original MobileNet from scratch. This module took inspiration from:
+	https://github.com/keras-team/keras/blob/master/keras/applications/mobilenet.py#L80-L313
 	:@param transfer_learning: Bool, true to upload imagenet weights
 	:@param NClasses: Number of categories in the dataset
-	:@param droput: Dropout regularization 
+	:@param droput: Dropout regularization
 	:retunr model: MobileNetV1
 	"""
 
@@ -34,38 +35,42 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 		:return model: Model with added Conv block
 		"""
 
+		NFilters *= alpha
+		NFilters = int(NFilters)
+
 		model.add(layers.Conv2D(
-			NFilters, 
-			(3,3), 
-			padding = 'same', 
-			use_bias = False, 
-			strides = strides, 
+			NFilters,
+			(3,3),
+			padding = 'same',
+			use_bias = False,
+			strides = strides,
 			name = 'Conv_{}'.format(str(_id)))
 		)
 
 		model.add(layers.BatchNormalization(
-			axis = -1, 
+			axis = -1,
 			name = 'Conv_{}_BN'.format(str(_id)))
 		)
-		
+
 		model.add(layers.ReLU(
-			6., 
+			6.,
 			name = 'Conv_{}_ReLU'.format(str(_id)))
 		)
 
 		return model
 
-		# 0x7fc3d739dc10
-		# 0x7fc3d73ded30
-
 	def DWSBlock(model: Sequential, NFilters: int, _id: str, strides: tuple = (1,1)) -> Sequential:
 		""" Depth-Wise Seperable Convolution Block.
-		From Howards et al, (2017) Figure 3. Right
-		:@param model: Current architecture
+		From Howards et al, (2017) Figure 3. Right.
+		:@param model: Current architecture, type: tensorflow.keras.Sequential
 		:@param NFilters: Number of filters in the point-wise convolutions
 		:@param strides: Strides
 		:return model: Model with added DWS block
 		"""
+
+		NFilters *= alpha
+		NFilters = int(NFilters)
+
 		if strides == (1,1):
 			padding = 'same'
 
@@ -79,42 +84,43 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 		##	Depth-Wise Convolutions
 		##
 		model.add(DepthwiseConv2D(
-			(3,3), 
-			padding = padding, 
-			strides = strides, 
-			use_bias = False, 
+			(3,3),
+			padding = padding,
+			strides = strides,
+			use_bias = False,
+			depth_multiplier = depth_multiplier,
 			name = 'DWS_{}'.format(str(_id)))
 		)
 
 		model.add(BatchNormalization(
-			axis = -1, 
+			axis = -1,
 			name = 'DWS_{}_BN'.format(str(_id)))
 		)
 
 		model.add(ReLU(
-			6., 
+			6.,
 			name = 'DWS_{}_ReLU'.format(str(_id)))
 		)
 
 		##
 		##	Point-Wise Convolutions
-		##		
+		##
 		model.add(Conv2D(
-			NFilters, 
-			(1,1), 
-			padding = 'same', 
-			use_bias=False, 
-			strides = (1,1), 
+			NFilters,
+			(1,1),
+			padding = 'same',
+			use_bias=False,
+			strides = (1,1),
 			name = 'POINT-W_{}'.format(str(_id)))
 		)
-		
+
 		model.add(BatchNormalization(
-			axis = -1, 
+			axis = -1,
 			name = 'POINT-W_{}_BN'.format(str(_id)))
 		)
-		
+
 		model.add(ReLU(
-			6., 
+			6.,
 			name = 'POINT-W_{}_ReLU'.format(str(_id)))
 		)
 
@@ -124,18 +130,21 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 	model.add(layers.Input(shape = (224,224, 3)))
 	model = ConvBlock(model, strides = (2,2))
 	model = DWSBlock(model, 64, _id = '1')
-	model = DWSBlock(model, 128, strides = (2,2), _id = '2') 
-	model = DWSBlock(model, 128, _id = '3') 
+	model = DWSBlock(model, 128, strides = (2,2), _id = '2')
+	model = DWSBlock(model, 128, _id = '3')
 	model = DWSBlock(model, 256, strides = (2,2), _id = '4')
-	model = DWSBlock(model, 256, _id = '5') 
+	model = DWSBlock(model, 256, _id = '5')
 	model = DWSBlock(model, 512, strides = (2,2), _id = '6')
-	model = DWSBlock(model, 512, _id = '7') 
-	model = DWSBlock(model, 512, _id = '8') 
-	model = DWSBlock(model, 512, _id = '9') 
-	model = DWSBlock(model, 512, _id = '10') 
-	model = DWSBlock(model, 512, _id = '11') 
-	model = DWSBlock(model, 1024, strides = (2,2), _id = '12') 
-	model = DWSBlock(model, 1024, _id = '13') 
+	model = DWSBlock(model, 512, _id = '7')
+
+	if not config:
+
+		model = DWSBlock(model, 512, _id = '8')
+		model = DWSBlock(model, 512, _id = '9')
+		model = DWSBlock(model, 512, _id = '10')
+		model = DWSBlock(model, 512, _id = '11')
+		model = DWSBlock(model, 1024, strides = (2,2), _id = '12')
+		model = DWSBlock(model, 1024, _id = '13')
 
 	if transfer_learning:
 
@@ -146,14 +155,19 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 
 		weights = data_utils.get_file(
           model_name, weights_path, cache_subdir='models')
-		
+
 		model.load_weights(weights)
 
 	##
 	##	Bottom layers
 	##
 	model.add(layers.GlobalAveragePooling2D())
-	model.add(layers.Reshape((1, 1, 1024)))
+
+	if not config:
+		model.add(layers.Reshape((1, 1, int(1024*alpha))))
+	else:
+		model.add(layers.Reshape((1, 1, int(512*alpha))))
+
 	model.add(layers.Dropout(dropout))
 	model.add(layers.Conv2D(NClasses, (1,1), padding = 'same'))
 	model.add(layers.Reshape((NClasses, )))
@@ -165,13 +179,16 @@ def MobileNetFromScratch(transfer_learning: bool = True, NClasses: int = 15, dro
 
 def MobileNetModule(args) -> Sequential:
 	""" Initializes and compiles MobileNetV1.
-	:@param transfer_learning: Type Bool. True to return network suited for transfer learning.
-	:@param NClasses: Number of labels
-	:@param args: Program arguments
-	:return model: A compiled network
+	:@param args: System arguments, type: argparse.ArgumentParser
 	"""
 
-	model = MobileNetFromScratch(transfer_learning = args.transfer_learning, NClasses = args.NClasses, dropout = args.dropout)
+	model = MobileNetFromScratch(
+	transfer_learning = args.transfer_learning,
+	NClasses = args.NClasses,
+	dropout = args.dropout,
+	alpha = args.alpha,
+	depth_multiplier = args.depth_multiplier,
+  config = args.config)
 
 	model.summary()
 
@@ -186,4 +203,3 @@ def MobileNetModule(args) -> Sequential:
 		metrics = ['accuracy'])
 
 	return model
-

@@ -32,7 +32,10 @@ parser.add_argument('--scheduler',  action = 'store_true', default=False,
 	help='Using a learning rate decay scheduler. Default: False')
 
 parser.add_argument('--fine_tune',  action = 'store_true', default=False,
-	help='Fine tune a pre trained model. Default: False')
+	help='Fine tune a pre trained model. This tag requires also a --path to the pre trained weights. E.g. --fine_tune --path "path_to_weights". Default: False')
+
+parser.add_argument('--config',  action = 'store_true', default=False,
+	help='Make a prediction of an image.')
 
 parser.add_argument('--max_brightness', type = float, default=0.95,
 	help='Image Augumentation Argument. Maximum allowed brightness when generating the training set. Default: 0.95')
@@ -65,6 +68,12 @@ parser.add_argument('--dropout', type = float, default=2e-3,
 
 parser.add_argument('--epochs', type = int, default=700,
 	help='Epochs. Default: 700')
+
+parser.add_argument('--alpha', type = float, default=1.,
+	help='Hyperparameter for MobileNet, adjusting its width.')
+
+parser.add_argument('--depth_multiplier', type = float, default=1,
+	help='Hyperparameter for MobileNet, adjusting its depth.')
 
 parser.add_argument('--path', type = str, default='weights/original_mobilenet.ckpt',
 	help='Path to pre trained model. Default: weights/original_mobilenet.ckpt')
