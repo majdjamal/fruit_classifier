@@ -5,7 +5,7 @@ This is a project in the Deep Learning course [DD2424](https://www.kth.se/studen
 
 ## Abstract
 
-Deep networks are growing deeper and require more energy resources for training. Previous research has shown that the deep learning field will stop progressing if contributors do not produce lighter and efficient network architectures. This study utilizes MobileNet, the state-of-the-art network for mobile devices, to classify images of fruits and vegetables, and compares its performances to networks with more extensive architectures. Networks were trained from randomly initialized weights and Transfer Learning using ImageNet weights. MobileNet trained with Transfer Learning produced a top-1 accuracy of 96.8% and performed like the more extensive network architectures. This study uses the top-1 MobileNet model to conclude a production-grade real-time image classification app of fruits and vegetables.
+Deep networks are growing deeper and require more energy resources. Previous research has shown that the deep learning field will stop progressing if contributors do not produce lighter and efficient network architectures. This study utilizes MobileNet, the state-of-the-art network for mobile devices, to classify images of fruits and vegetables, and compares its performances to networks with more extensive architectures. Networks were trained from randomly initialized weights and Transfer Learning using ImageNet weights. MobileNet trained with Transfer Learning produced a top-1 accuracy of 96.8% and performed like the more extensive network architectures. This study uses the top-1 MobileNet predictor to conclude a real-time image classification app.
 
 ## Test The Program
 
@@ -45,16 +45,29 @@ python3 main.py --predict --img_path 'MyPath/ToThe/Image'
 -----
 > **_NOTE:_** Replace MyPath/ToThe/Image with the path to your image to classify. Default: data/test_data/apple.jpg
 
-### Train a network
+### Train and evaluate a network
 This part requires an NVIDIA GPU.
-#### With randomly initialized weight
+
+#### Generate the dataset
+
+Send a request to Majdj@kth.se to obtain the dataset folder, because the dataset is larger than 100MB.
+
+* Replace FRUITS folder with the one obtained from majdj@kth.se.
+
+* Run,
+
+```bash
+python3 main.py --generate_data
+```
+
+#### Training with randomly initialized weight
 
 * Run,
 
 ```bash
 python3 main.py --train --model "mobilenet"
 ```
-#### With Transfer Learning
+#### Training with Transfer Learning
 
 * Run,
 
@@ -65,7 +78,7 @@ python3 main.py --train --model "mobilenet" --transfer_learning
 
 ----
 
-### Evaluate a network
+#### Evaluate the network
 
 * Run,
 
