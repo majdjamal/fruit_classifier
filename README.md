@@ -1,7 +1,7 @@
 # Real-Time Image Classification
- 
 
-This is a project in the Deep Learning course [DD2424](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at the Royal Institute of Technology. 
+
+This is a project in the Deep Learning course [DD2424](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at the Royal Institute of Technology.
 
 ## Abstract
 
@@ -11,7 +11,18 @@ Deep networks are growing deeper and require more energy resources for training.
 
 * Navigate to the repository
 
+* Setup a virtual environment
+
+```bash
+python3 -m venv fruits
+```
+
+```bash
+source fruits/bin/activate
+```
+
 * Install Required Utility Packages
+
 ```bash
 pip3 install -r requirements.txt
 ```
@@ -21,7 +32,7 @@ pip3 install -r requirements.txt
 * Run,
 
 ```bash
-python3 main.py --realtime 
+python3 main.py --realtime
 ```
 ----
 ### Make a prediction
@@ -32,7 +43,7 @@ python3 main.py --realtime
 python3 main.py --predict --img_path 'MyPath/ToThe/Image'
 ```
 -----
-> **_NOTE:_** Replace MyPath/ToThe/Image with the path to your image to classify. 
+> **_NOTE:_** Replace MyPath/ToThe/Image with the path to your image to classify.
 
 ### Train a network
 This part requires an NVIDIA GPU.
@@ -41,7 +52,7 @@ This part requires an NVIDIA GPU.
 * Run,
 
 ```bash
-python3 main.py --train --model "mobilenet" 
+python3 main.py --train --model "mobilenet"
 ```
 #### With Transfer Learning
 
@@ -50,7 +61,7 @@ python3 main.py --train --model "mobilenet"
 ```bash
 python3 main.py --train --model "mobilenet" --transfer_learning
 ```
-> **_NOTE:_**  Training supplements: scheduler, pass --scheduler; fine tune a pre-trained model, pass --fine_tune 
+> **_NOTE:_**  Training supplements: scheduler, pass --scheduler; fine tune a pre-trained model, pass --fine_tune
 
 ----
 
