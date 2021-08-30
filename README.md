@@ -52,7 +52,7 @@ This part requires an NVIDIA GPU.
 
 Send a request to Majdj@kth.se to obtain the dataset folder, because the dataset is larger than 100MB.
 
-* Replace FRUITS folder with the one obtained from majdj@kth.se.
+* Replace data/FRUITS folder with the one obtained from majdj@kth.se.
 
 * Run,
 
