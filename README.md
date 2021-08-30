@@ -43,7 +43,7 @@ python3 main.py --realtime
 python3 main.py --predict --img_path 'MyPath/ToThe/Image'
 ```
 -----
-> **_NOTE:_** Replace MyPath/ToThe/Image with the path to your image to classify.
+> **_NOTE:_** Replace MyPath/ToThe/Image with the path to your image to classify. Default: data/test_data/apple.jpg
 
 ### Train a network
 This part requires an NVIDIA GPU.

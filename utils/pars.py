@@ -78,7 +78,7 @@ parser.add_argument('--depth_multiplier', type = float, default=1,
 parser.add_argument('--path', type = str, default='weights/original_mobilenet.ckpt',
 	help='Path to pre trained model. Default: weights/original_mobilenet.ckpt')
 
-parser.add_argument('--img_path', type = str, default='data/test_data/apple.png',
+parser.add_argument('--img_path', type = str, default='data/test_data/apple.jpg',
 	help='Path to the image for prediction.')
 
 args = parser.parse_args()
